@@ -13,6 +13,7 @@ import java.time.Instant;
 @With
 @Builder(toBuilder = true)
 @RequiredArgsConstructor
+
 public class Notification {
 
     Long id;

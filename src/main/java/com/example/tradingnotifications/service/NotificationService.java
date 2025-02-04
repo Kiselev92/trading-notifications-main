@@ -14,4 +14,11 @@ public class NotificationService {
     public Long create(Notification notification) {
         return notificationDao.create(notification);
     }
+
+    public Notification getById(Long id) {
+        return notificationDao.getById(id);
+    }
+
 }
+
+

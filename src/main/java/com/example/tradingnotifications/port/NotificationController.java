@@ -3,10 +3,7 @@ package com.example.tradingnotifications.port;
 import com.example.tradingnotifications.domain.Notification;
 import com.example.tradingnotifications.service.NotificationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 
@@ -38,4 +35,10 @@ public class NotificationController {
                 .updated(now)
                 .build();
     }
+    @GetMapping("/notification/{id}")
+    public Notification getNotification(@PathVariable Long id) {
+        return notificationService.getById(id);
+    }
+
+
 }
