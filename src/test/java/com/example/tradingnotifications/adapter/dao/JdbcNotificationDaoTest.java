@@ -69,4 +69,21 @@ class JdbcNotificationDaoTest extends IntegrationTest {
             return  timestamp == null ? null : timestamp.toInstant();
         }
     }
+
+    @Test
+    void request_success() {
+        //GIVEN
+        Notification notification = Notification.builder()
+                .id(null)
+                .stockId(100L)
+                .targetValue(BigDecimal.valueOf(1000))
+                .comment("My-comment")
+                .build();
+        //WHEN
+        Long actualId = notificationDao.getById(Notification notification);
+        //THEN
+        assertThat(findAll())
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("targetValue","comment", "created", "updated")
+                .containsOnly(notification.withId(actualId));
+    }
 }

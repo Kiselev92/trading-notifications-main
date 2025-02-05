@@ -36,8 +36,9 @@ public class NotificationController {
                 .build();
     }
     @GetMapping("/notification/{id}")
-    public Notification getNotification(@PathVariable Long id) {
+    public Notification getNotification(@PathVariable("id") Long id) {
         return notificationService.getById(id);
+
     }
 
 

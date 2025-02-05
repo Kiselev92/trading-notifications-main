@@ -9,7 +9,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.time.Instant;
 
@@ -44,7 +43,27 @@ public class JdbcNotificationDao implements NotificationDao {
                 SELECT id, target_value, stock_id, comment, created, updated 
                 FROM notifications WHERE id = :id
                 """;
-        return jdbc.queryForObject(sql, new MapSqlParameterSource("id", id), Notification.class);
+
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", id);
+
+
+
+        return jdbc.query(sql, params, rs -> {
+            if (rs.next()) {
+                return new Notification(
+                        rs.getLong("id"),
+                        rs.getLong("stock_id"),
+                        rs.getBigDecimal("target_value"),
+                        rs.getString("comment"),
+                        rs.getTimestamp("created").toInstant(),
+                        rs.getTimestamp("updated").toInstant()
+                );
+            }
+            return null;
+        });
+        //jdbc.queryForObject(sql, new MapSqlParameterSource("id", notification), Notification.class);
 
     }
 }
