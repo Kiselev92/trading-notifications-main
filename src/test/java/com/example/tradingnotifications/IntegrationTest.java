@@ -19,7 +19,7 @@ public abstract class IntegrationTest {
 
     @BeforeEach
     void setup() {
-        clearTables("notification");
+        clearTables("notifications");
     }
 
     protected void clearTables(String... tableNames) {
