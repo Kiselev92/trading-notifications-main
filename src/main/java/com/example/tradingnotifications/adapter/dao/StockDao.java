@@ -1,6 +1,6 @@
 package com.example.tradingnotifications.adapter.dao;
 
-import com.example.tradingnotifications.domain.Notification;
+import com.example.tradingnotifications.domain.Stock;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -14,22 +14,20 @@ import java.time.Instant;
 
 @Repository
 @RequiredArgsConstructor
-public class JdbcNotificationDao implements NotificationDao {
+public class StockDao {
 
     private final NamedParameterJdbcOperations jdbc;
 
-    @Override
-    public Long create(Notification notification) {
-        String sql = """
-                INSERT INTO notifications (id, target_value, stock_id, comment, created, updated)
-                VALUES (default, :targetValue, :stockId, :comment, :created, :updated)
+    public Long create(Stock stock) {
+        var sql = """
+                INSERT INTO stocks (id, type, ticker, name, created, updated)
+                VALUES (default, :type, :ticker, :name, :created, :updated)
                 """;
-
         Instant now = Instant.now();
         SqlParameterSource params = new MapSqlParameterSource()
-                .addValue("targetValue", notification.getTargetValue())
-                .addValue("stockId", notification.getStockId())
-                .addValue("comment", notification.getComment())
+                .addValue("type", stock.getType().name())
+                .addValue("ticker", stock.getTicker())
+                .addValue("name", stock.getName())
                 .addValue("created", Timestamp.from(now))
                 .addValue("updated", Timestamp.from(now));
 

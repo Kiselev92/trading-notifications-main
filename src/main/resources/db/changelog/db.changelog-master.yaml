@@ -1,3 +1,5 @@
 databaseChangeLog:
   - include:
       file: db/changelog/20250129_notifications.xml
+  - include:
+      file: db/changelog/20250214_stocks.xml
