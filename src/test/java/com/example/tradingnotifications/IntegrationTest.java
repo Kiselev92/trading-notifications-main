@@ -1,5 +1,6 @@
 package com.example.tradingnotifications;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,11 +15,16 @@ import static java.util.Collections.emptyMap;
 public abstract class IntegrationTest {
 
     @Autowired
-    protected NamedParameterJdbcOperations jdbcOperations;
+    protected NamedParameterJdbcOperations testJdbc;
+
+    @BeforeEach
+    void setup() {
+        clearTables("notification");
+    }
 
     protected void clearTables(String... tableNames) {
         for (String tableName : tableNames) {
-            jdbcOperations.update("DELETE FROM " + tableName, emptyMap());
+            testJdbc.update("DELETE FROM " + tableName, emptyMap());
         }
     }
 }

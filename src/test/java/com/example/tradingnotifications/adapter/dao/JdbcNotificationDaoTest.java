@@ -23,7 +23,7 @@ class JdbcNotificationDaoTest extends IntegrationTest {
     private NotificationDao notificationDao;
 
     @Test
-    void create_success() {
+    void create__when_notification_does_not_exist() {
         // GIVEN
         Notification notification = Notification.builder()
                 .id(null)
@@ -41,16 +41,32 @@ class JdbcNotificationDaoTest extends IntegrationTest {
                 .containsOnly(notification.withId(actualId));
     }
 
-    // Вспомогательный код для тестов
-    @Autowired
-    NamedParameterJdbcOperations testJdbc;
-
     private List<Notification> findAll() {
         return testJdbc.query("SELECT * FROM notifications", Map.of(), rowMapper);
     }
 
-    private static final RowMapper<Notification> rowMapper = new NotificationRowMapper();
+    @Test
+    void find_by_id__when_notification_exists() {
+        //GIVEN
+        Notification preparedNotification = Notification.builder()
+                .stockId(100L)
+                .targetValue(BigDecimal.valueOf(1000))
+                .comment("My-comment")
+                .build();
 
+        Long notificationId = notificationDao.create(preparedNotification);
+
+        //WHEN
+        Notification actualNotification = notificationDao.getById(notificationId);
+
+        //THEN
+        assertThat(actualNotification)
+                .usingRecursiveComparison()
+                .ignoringFields("created", "updated")
+                .isEqualTo(preparedNotification.withId(notificationId));
+    }
+
+    private static final RowMapper<Notification> rowMapper = new NotificationRowMapper();
 
     private static class NotificationRowMapper implements RowMapper<Notification> {
         @Override
@@ -68,22 +84,5 @@ class JdbcNotificationDaoTest extends IntegrationTest {
         private static Instant toInstant(Timestamp timestamp) {
             return  timestamp == null ? null : timestamp.toInstant();
         }
-    }
-
-    @Test
-    void request_success() {
-        //GIVEN
-        Notification notification = Notification.builder()
-                .id(null)
-                .stockId(100L)
-                .targetValue(BigDecimal.valueOf(1000))
-                .comment("My-comment")
-                .build();
-        //WHEN
-        Long actualId = notificationDao.getById(Notification notification);
-        //THEN
-        assertThat(findAll())
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("targetValue","comment", "created", "updated")
-                .containsOnly(notification.withId(actualId));
     }
 }
