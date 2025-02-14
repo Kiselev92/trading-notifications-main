@@ -5,7 +5,6 @@ import com.example.tradingnotifications.domain.Notification;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -20,10 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JdbcNotificationDaoTest extends IntegrationTest {
 
     @Autowired
-    private NotificationDao notificationDao;
+    private JdbcNotificationDao JdbcNotificationDao;
 
     @Test
-    void create_success() {
+    void create__when_notification_does_not_exist() {
         // GIVEN
         Notification notification = Notification.builder()
                 .id(null)
@@ -33,7 +32,7 @@ class JdbcNotificationDaoTest extends IntegrationTest {
                 .build();
 
         // WHEN
-        Long actualId = notificationDao.create(notification);
+        Long actualId = JdbcNotificationDao.create(notification);
 
         // THEN
         assertThat(findAll())
@@ -41,16 +40,32 @@ class JdbcNotificationDaoTest extends IntegrationTest {
                 .containsOnly(notification.withId(actualId));
     }
 
-    // Вспомогательный код для тестов
-    @Autowired
-    NamedParameterJdbcOperations testJdbc;
-
     private List<Notification> findAll() {
         return testJdbc.query("SELECT * FROM notifications", Map.of(), rowMapper);
     }
 
-    private static final RowMapper<Notification> rowMapper = new NotificationRowMapper();
+    @Test
+    void find_by_id__when_notification_exists() {
+        //GIVEN
+        Notification preparedNotification = Notification.builder()
+                .stockId(100L)
+                .targetValue(BigDecimal.valueOf(1000))
+                .comment("My-comment")
+                .build();
 
+        Long notificationId = JdbcNotificationDao.create(preparedNotification);
+
+        //WHEN
+        Notification actualNotification = JdbcNotificationDao.findById(notificationId);
+
+        //THEN
+        assertThat(actualNotification)
+                .usingRecursiveComparison()
+                .ignoringFields("created", "updated")
+                .isEqualTo(preparedNotification.withId(notificationId));
+    }
+
+    private static final RowMapper<Notification> rowMapper = new NotificationRowMapper();
 
     private static class NotificationRowMapper implements RowMapper<Notification> {
         @Override

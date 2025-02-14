@@ -1,6 +1,6 @@
 package com.example.tradingnotifications.service;
 
-import com.example.tradingnotifications.adapter.dao.NotificationDao;
+import com.example.tradingnotifications.adapter.dao.JdbcNotificationDao;
 import com.example.tradingnotifications.domain.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NotificationService {
 
-    private final NotificationDao notificationDao;
+    private final JdbcNotificationDao JdbcNotificationDao;
 
     public Long create(Notification notification) {
-        return notificationDao.create(notification);
+        return JdbcNotificationDao.create(notification);
     }
+
+    public Notification findById(Long id) { return JdbcNotificationDao.findById(id); }
 }
