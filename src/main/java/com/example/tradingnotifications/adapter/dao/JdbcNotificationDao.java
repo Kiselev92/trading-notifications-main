@@ -58,4 +58,13 @@ public class JdbcNotificationDao {
                 );
         });
     }
+
+    public void deleteById(Long id) {
+        String sql = """
+                DELETE FROM notifications WHERE id = :id
+                """;
+
+        SqlParameterSource params = new MapSqlParameterSource("id", id);
+        jdbc.update(sql, params);
+    }
 }

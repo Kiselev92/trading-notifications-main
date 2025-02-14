@@ -16,4 +16,6 @@ public class NotificationService {
     }
 
     public Notification findById(Long id) { return JdbcNotificationDao.findById(id); }
+
+    public void deleteById(Long id) { JdbcNotificationDao.deleteById(id); }
 }

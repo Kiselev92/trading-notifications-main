@@ -65,6 +65,25 @@ class JdbcNotificationDaoTest extends IntegrationTest {
                 .isEqualTo(preparedNotification.withId(notificationId));
     }
 
+    @Test
+    void delete_notification__when_notification_exist() {
+        //GIVEN
+        Notification notification = Notification.builder()
+                .id(null)
+                .stockId(100L)
+                .targetValue(BigDecimal.valueOf(1000))
+                .comment("My-comment")
+                .build();
+
+        Long notificationId = JdbcNotificationDao.create(notification);
+
+        //WHEN
+        JdbcNotificationDao.deleteById(notificationId);
+
+        //THEN
+        assertThat(notificationId == 0);
+    }
+
     private static final RowMapper<Notification> rowMapper = new NotificationRowMapper();
 
     private static class NotificationRowMapper implements RowMapper<Notification> {
