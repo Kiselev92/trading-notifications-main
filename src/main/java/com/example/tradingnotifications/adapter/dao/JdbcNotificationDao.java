@@ -14,11 +14,11 @@ import java.time.Instant;
 
 @Repository
 @RequiredArgsConstructor
-public class JdbcNotificationDao implements NotificationDao {
+public class JdbcNotificationDao {
 
     private final NamedParameterJdbcOperations jdbc;
 
-    @Override
+
     public Long create(Notification notification) {
         String sql = """
                 INSERT INTO notifications (id, target_value, stock_id, comment, created, updated)
@@ -38,21 +38,17 @@ public class JdbcNotificationDao implements NotificationDao {
         return (Long) keyHolder.getKeys().get("id");
     }
 
-    public Notification getById(Long id) {
+    public Notification findById(Long id) {
         String sql = """
-                SELECT id, target_value, stock_id, comment, created, updated 
+                SELECT *
                 FROM notifications WHERE id = :id
                 """;
 
-
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
-
-
-
         return jdbc.query(sql, params, rs -> {
-            if (rs.next()) {
-                return new Notification(
+            rs.next();
+            return new Notification(
                         rs.getLong("id"),
                         rs.getLong("stock_id"),
                         rs.getBigDecimal("target_value"),
@@ -60,10 +56,6 @@ public class JdbcNotificationDao implements NotificationDao {
                         rs.getTimestamp("created").toInstant(),
                         rs.getTimestamp("updated").toInstant()
                 );
-            }
-            return null;
         });
-        //jdbc.queryForObject(sql, new MapSqlParameterSource("id", notification), Notification.class);
-
     }
 }

@@ -5,7 +5,6 @@ import com.example.tradingnotifications.domain.Notification;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -20,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JdbcNotificationDaoTest extends IntegrationTest {
 
     @Autowired
-    private NotificationDao notificationDao;
+    private JdbcNotificationDao JdbcNotificationDao;
 
     @Test
     void create__when_notification_does_not_exist() {
@@ -33,7 +32,7 @@ class JdbcNotificationDaoTest extends IntegrationTest {
                 .build();
 
         // WHEN
-        Long actualId = notificationDao.create(notification);
+        Long actualId = JdbcNotificationDao.create(notification);
 
         // THEN
         assertThat(findAll())
@@ -54,10 +53,10 @@ class JdbcNotificationDaoTest extends IntegrationTest {
                 .comment("My-comment")
                 .build();
 
-        Long notificationId = notificationDao.create(preparedNotification);
+        Long notificationId = JdbcNotificationDao.create(preparedNotification);
 
         //WHEN
-        Notification actualNotification = notificationDao.getById(notificationId);
+        Notification actualNotification = JdbcNotificationDao.findById(notificationId);
 
         //THEN
         assertThat(actualNotification)

@@ -35,11 +35,12 @@ public class NotificationController {
                 .updated(now)
                 .build();
     }
+    /**
+     * Получить уведомление по id
+     * @return id уведомления
+     */
     @GetMapping("/notification/{id}")
     public Notification getNotification(@PathVariable("id") Long id) {
-        return notificationService.getById(id);
-
+        return notificationService.findById(id);
     }
-
-
 }
