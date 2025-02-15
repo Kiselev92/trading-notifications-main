@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JdbcNotificationDaoTest extends IntegrationTest {
 
     @Autowired
-    private JdbcNotificationDao JdbcNotificationDao;
+    private NotificationDao notificationDao;
 
     @Test
     void create__when_notification_does_not_exist() {
@@ -32,7 +32,7 @@ class JdbcNotificationDaoTest extends IntegrationTest {
                 .build();
 
         // WHEN
-        Long actualId = JdbcNotificationDao.create(notification);
+        Long actualId = notificationDao.create(notification);
 
         // THEN
         assertThat(findAll())
@@ -53,10 +53,10 @@ class JdbcNotificationDaoTest extends IntegrationTest {
                 .comment("My-comment")
                 .build();
 
-        Long notificationId = JdbcNotificationDao.create(preparedNotification);
+        Long notificationId = notificationDao.create(preparedNotification);
 
         //WHEN
-        Notification actualNotification = JdbcNotificationDao.findById(notificationId);
+        Notification actualNotification = notificationDao.findById(notificationId);
 
         //THEN
         assertThat(actualNotification)

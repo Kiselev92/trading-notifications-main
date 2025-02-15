@@ -42,7 +42,7 @@ class StockDaoTest extends IntegrationTest {
     }
 
     private List<Stock> findAll() {
-        return jdbcOperations.query("SELECT * FROM stocks", Map.of(), rowMapper);
+        return testJdbc.query("SELECT * FROM stocks", Map.of(), rowMapper);
     }
 
     private static final RowMapper<Stock> rowMapper = new StockRowMapper();

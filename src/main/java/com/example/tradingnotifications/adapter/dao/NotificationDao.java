@@ -36,4 +36,25 @@ public class NotificationDao {
         jdbc.update(sql, params, keyHolder);
         return (Long) keyHolder.getKeys().get("id");
     }
+
+    public Notification findById(Long id) {
+        String sql = """
+                SELECT *
+                FROM notifications WHERE id = :id
+                """;
+
+        SqlParameterSource params = new MapSqlParameterSource()
+                .addValue("id", id);
+        return jdbc.query(sql, params, rs -> {
+            rs.next();
+            return new Notification(
+                    rs.getLong("id"),
+                    rs.getLong("stock_id"),
+                    rs.getBigDecimal("target_value"),
+                    rs.getString("comment"),
+                    rs.getTimestamp("created").toInstant(),
+                    rs.getTimestamp("updated").toInstant()
+            );
+        });
+    }
 }

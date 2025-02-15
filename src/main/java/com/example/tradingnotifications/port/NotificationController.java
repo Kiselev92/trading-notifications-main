@@ -1,6 +1,7 @@
 package com.example.tradingnotifications.port;
 
 import com.example.tradingnotifications.domain.Notification;
+import com.example.tradingnotifications.port.request.NotificationCreateRequest;
 import com.example.tradingnotifications.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
