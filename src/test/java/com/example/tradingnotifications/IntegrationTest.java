@@ -26,6 +26,7 @@ public abstract class IntegrationTest {
         for (String tableName : tableNames) {
             testJdbc.update("DELETE FROM " + tableName, emptyMap());
             testJdbc.update("DELETE FROM " + tableName, emptyMap());
+            testJdbc.update("DELETE FROM " + tableName, emptyMap());
         }
     }
 }

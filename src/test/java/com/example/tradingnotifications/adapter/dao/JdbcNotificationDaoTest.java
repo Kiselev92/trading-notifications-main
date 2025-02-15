@@ -68,20 +68,29 @@ class JdbcNotificationDaoTest extends IntegrationTest {
     @Test
     void delete_notification__when_notification_exist() {
         //GIVEN
-        Notification notification = Notification.builder()
-                .id(null)
+        Notification ownNotification = Notification.builder()
                 .stockId(100L)
                 .targetValue(BigDecimal.valueOf(1000))
                 .comment("My-comment")
                 .build();
 
-        Long notificationId = JdbcNotificationDao.create(notification);
+        Notification otherNotification = Notification.builder()
+                .stockId(100L)
+                .targetValue(BigDecimal.valueOf(1000))
+                .comment("My-comment")
+                .build();
+
+        Long ownNotificationId = JdbcNotificationDao.create(ownNotification);
+        Long otherNotificationId = JdbcNotificationDao.create(otherNotification);
 
         //WHEN
-        JdbcNotificationDao.deleteById(notificationId);
+        JdbcNotificationDao.deleteById(ownNotificationId);
 
         //THEN
-        assertThat(notificationId == 0);
+        assertThat(findAll())
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("created", "updated")
+                .doesNotContain(ownNotification)
+                .containsOnly(otherNotification.withId(otherNotificationId));
     }
 
     private static final RowMapper<Notification> rowMapper = new NotificationRowMapper();
@@ -100,7 +109,7 @@ class JdbcNotificationDaoTest extends IntegrationTest {
         }
 
         private static Instant toInstant(Timestamp timestamp) {
-            return  timestamp == null ? null : timestamp.toInstant();
+            return timestamp == null ? null : timestamp.toInstant();
         }
     }
 }
