@@ -1,11 +1,10 @@
 package com.example.tradingnotifications.port;
 
 import com.example.tradingnotifications.domain.Notification;
+import com.example.tradingnotifications.port.request.NotificationEditRequest;
 import com.example.tradingnotifications.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,8 +20,7 @@ public class NotificationController {
      * @return идентификатор уведомления
      */
     @PostMapping
-    public Long create(@RequestHeader(name = "OS") String os,
-                       @RequestBody NotificationEditRequest request) {
+    public Long create(@RequestBody NotificationEditRequest request) {
         return notificationService.create(toModel(request));
     }
 
@@ -37,9 +35,7 @@ public class NotificationController {
 
     /**
      * Изменить уведомление по id
-     * @return id уведомления
      */
-
     @PutMapping
     public void updateNotification(@RequestBody NotificationEditRequest request) {
         notificationService.update(toModel(request));

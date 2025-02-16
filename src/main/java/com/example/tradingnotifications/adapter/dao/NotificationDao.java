@@ -15,8 +15,8 @@ import java.time.Instant;
 @Repository
 @RequiredArgsConstructor
 public class NotificationDao {
-    private final NamedParameterJdbcOperations jdbc;
 
+    private final NamedParameterJdbcOperations jdbc;
 
     public Long create(Notification notification) {
         String sql = """

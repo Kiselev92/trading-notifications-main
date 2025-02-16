@@ -1,0 +1,19 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+    <changeSet author="akiselev" id="20250216_stocks_ticker_index.xml">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="stocks"/>
+                <not>
+                    <indexExists tableName="stocks" indexName="idx_stocks_ticker"/>
+                </not>
+            </and>
+        </preConditions>
+
+        <createIndex tableName="stocks" indexName="idx_stocks_ticker">
+            <column name="ticker"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
