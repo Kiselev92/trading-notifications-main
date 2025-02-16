@@ -5,6 +5,8 @@ import com.example.tradingnotifications.domain.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -18,4 +20,12 @@ public class NotificationService {
     public Notification findById(Long id) { return notificationDao.findById(id); }
 
     public void deleteById(Long id) { notificationDao.deleteById(id); }
+
+    public Notification update(Long id, Notification updatedNotification) {
+        if (notificationDao.findById(id) == null) {
+            throw new NoSuchElementException("Notification with id " + id + " not found");
+        }
+        notificationDao.update(id, updatedNotification);
+        return updatedNotification;
+    }
 }

@@ -63,4 +63,24 @@ public class NotificationDao {
         SqlParameterSource params = new MapSqlParameterSource("id", id);
         jdbc.update(sql, params);
     }
+
+    public Long update(Long id, Notification updatedNotification) {
+        String sql = """
+                UPDATE notifications 
+                SET stock_id = :stockId, 
+                target_value = :targetValue, 
+                comment = :comment, 
+                updated = :updated
+                WHERE id = :id
+                """;
+
+        SqlParameterSource params = new MapSqlParameterSource("id", id)
+                .addValue("targetValue", updatedNotification.getTargetValue())
+                .addValue("stockId", updatedNotification.getStockId())
+                .addValue("comment", updatedNotification.getComment())
+                .addValue("updated", Timestamp.from(Instant.now()));
+
+        jdbc.update(sql, params);
+        return (Long) params.getValue("id");
+    }
 }
