@@ -21,11 +21,15 @@ public class NotificationService {
 
     public void deleteById(Long id) { notificationDao.deleteById(id); }
 
-    public Notification update(Long id, Notification updatedNotification) {
-        if (notificationDao.findById(id) == null) {
-            throw new NoSuchElementException("Notification with id " + id + " not found");
+    public void update(Notification newNotification) {
+        Long id = newNotification.getId();
+        if (id == null) {
+            throw new IllegalStateException("Не указан идентификатор обновляемого уведомления. " + newNotification);
         }
-        notificationDao.update(id, updatedNotification);
-        return updatedNotification;
+        Notification oldNotification = notificationDao.findById(id);
+        if (oldNotification == null) {
+            throw new NoSuchElementException("Notification with id " + id + " for update not found");
+        }
+        notificationDao.update(id, newNotification);
     }
 }

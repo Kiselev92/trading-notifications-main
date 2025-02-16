@@ -2,7 +2,6 @@ package com.example.tradingnotifications.port;
 
 import com.example.tradingnotifications.domain.Notification;
 import com.example.tradingnotifications.service.NotificationService;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +22,7 @@ public class NotificationController {
      */
     @PostMapping
     public Long create(@RequestHeader(name = "OS") String os,
-                       @RequestBody NotificationCreateRequest request) {
+                       @RequestBody NotificationEditRequest request) {
         return notificationService.create(toModel(request));
     }
 
@@ -41,10 +40,9 @@ public class NotificationController {
      * @return id уведомления
      */
 
-    @PutMapping("/{id}")
-    public Notification updateNotification(@PathVariable("id") Long id, @RequestBody NotificationUpdateRequest request) {
-        Notification existingNotification = notificationService.findById(id);
-        return notificationService.update(id, toModel(request, existingNotification));
+    @PutMapping
+    public void updateNotification(@RequestBody NotificationEditRequest request) {
+        notificationService.update(toModel(request));
     }
 
     /**
@@ -55,25 +53,12 @@ public class NotificationController {
         notificationService.deleteById(id);
     }
 
-    private static Notification toModel(NotificationCreateRequest request) {
-        Instant now = Instant.now();
+    private static Notification toModel(NotificationEditRequest request) {
         return Notification.builder()
+                .id(request.getId())
                 .stockId(request.getStockId())
                 .targetValue(request.getTargetValue())
                 .comment(request.getComment())
-                .created(now)
-                .updated(now)
-                .build();
-    }
-
-    private static Notification toModel(NotificationUpdateRequest updateRequest, Notification existingNotification) {
-        return Notification.builder()
-                .id(existingNotification.getId())
-                .stockId(updateRequest.getStockId() != null ? updateRequest.getStockId() : existingNotification.getStockId())
-                .targetValue(updateRequest.getTargetValue() != null ? updateRequest.getTargetValue() : existingNotification.getTargetValue())
-                .comment(updateRequest.getComment() != null ? updateRequest.getComment() : existingNotification.getComment())
-                .created(existingNotification.getCreated())
-                .updated(Instant.now())
                 .build();
     }
 }

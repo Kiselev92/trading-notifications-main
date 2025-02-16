@@ -9,7 +9,12 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationCreateRequest {
+public class NotificationEditRequest {
+
+    /**
+     * Идентификатор уведомления.
+     */
+    private Long id;
 
     /**
      * Идентификатор актива

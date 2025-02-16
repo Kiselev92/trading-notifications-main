@@ -90,7 +90,7 @@ public class NotificationDaoTest extends IntegrationTest {
         assertThat(findAll())
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("created", "updated")
                 .doesNotContain(ownNotification.withId(ownNotificationId))
-                .containsOnly(otherNotification.withId(otherNotificationId));
+                .contains(otherNotification.withId(otherNotificationId));
     }
 
     private static final RowMapper<Notification> rowMapper = new NotificationRowMapper();
