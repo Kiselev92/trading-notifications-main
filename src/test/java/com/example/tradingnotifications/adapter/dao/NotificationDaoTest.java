@@ -16,10 +16,10 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class JdbcNotificationDaoTest extends IntegrationTest {
+public class NotificationDaoTest extends IntegrationTest {
 
     @Autowired
-    private NotificationDao notificationDao;
+    NotificationDao notificationDao;
 
     @Test
     void create__when_notification_does_not_exist() {
@@ -65,6 +65,34 @@ class JdbcNotificationDaoTest extends IntegrationTest {
                 .isEqualTo(preparedNotification.withId(notificationId));
     }
 
+    @Test
+    void delete_notification__when_notification_exist() {
+        //GIVEN
+        Notification ownNotification = Notification.builder()
+                .stockId(100L)
+                .targetValue(BigDecimal.valueOf(1000))
+                .comment("My-comment")
+                .build();
+
+        Notification otherNotification = Notification.builder()
+                .stockId(100L)
+                .targetValue(BigDecimal.valueOf(1000))
+                .comment("My-comment")
+                .build();
+
+        Long ownNotificationId = notificationDao.create(ownNotification);
+        Long otherNotificationId = notificationDao.create(otherNotification);
+
+        //WHEN
+        notificationDao.deleteById(ownNotificationId);
+
+        //THEN
+        assertThat(findAll())
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("created", "updated")
+                .doesNotContain(ownNotification.withId(ownNotificationId))
+                .contains(otherNotification.withId(otherNotificationId));
+    }
+
     private static final RowMapper<Notification> rowMapper = new NotificationRowMapper();
 
     private static class NotificationRowMapper implements RowMapper<Notification> {
@@ -81,7 +109,7 @@ class JdbcNotificationDaoTest extends IntegrationTest {
         }
 
         private static Instant toInstant(Timestamp timestamp) {
-            return  timestamp == null ? null : timestamp.toInstant();
+            return timestamp == null ? null : timestamp.toInstant();
         }
     }
 }

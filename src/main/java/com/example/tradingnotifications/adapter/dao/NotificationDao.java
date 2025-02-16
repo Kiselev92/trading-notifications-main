@@ -39,9 +39,7 @@ public class NotificationDao {
 
     public Notification findById(Long id) {
         String sql = """
-                SELECT *
-                FROM notifications WHERE id = :id
-                """;
+                SELECT * FROM notifications WHERE id = :id""";
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
@@ -56,5 +54,28 @@ public class NotificationDao {
                     rs.getTimestamp("updated").toInstant()
             );
         });
+    }
+
+    public void deleteById(Long id) {
+        String sql = """
+                DELETE FROM notifications WHERE id = :id""";
+
+        SqlParameterSource params = new MapSqlParameterSource("id", id);
+        jdbc.update(sql, params);
+    }
+
+    public void update(Long id, Notification notification) {
+        String sql = """
+                UPDATE notifications 
+                SET stock_id = :stockId, target_value = :targetValue, comment = :comment, updated = :updated
+                WHERE id = :id""";
+
+        SqlParameterSource params = new MapSqlParameterSource("id", id)
+                .addValue("targetValue", notification.getTargetValue())
+                .addValue("stockId", notification.getStockId())
+                .addValue("comment", notification.getComment())
+                .addValue("updated", Timestamp.from(Instant.now()));
+
+        jdbc.update(sql, params);
     }
 }

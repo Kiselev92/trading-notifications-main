@@ -10,6 +10,7 @@ import java.time.Instant;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/notification")
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -20,28 +21,45 @@ public class NotificationController {
      * @param request - поля уведомления (тело POST запроса)
      * @return идентификатор уведомления
      */
-    @PostMapping("/notification")
+    @PostMapping
     public Long create(@RequestHeader(name = "OS") String os,
-                       @RequestBody NotificationCreateRequest request) {
+                       @RequestBody NotificationEditRequest request) {
         return notificationService.create(toModel(request));
     }
 
-    private static Notification toModel(NotificationCreateRequest request) {
-        Instant now = Instant.now();
-        return Notification.builder()
-                .stockId(request.getStockId())
-                .targetValue(request.getTargetValue())
-                .comment(request.getComment())
-                .created(now)
-                .updated(now)
-                .build();
-    }
     /**
      * Получить уведомление по id
      * @return id уведомления
      */
-    @GetMapping("/notification/{id}")
+    @GetMapping("/{id}")
     public Notification getNotification(@PathVariable("id") Long id) {
         return notificationService.findById(id);
+    }
+
+    /**
+     * Изменить уведомление по id
+     * @return id уведомления
+     */
+
+    @PutMapping
+    public void updateNotification(@RequestBody NotificationEditRequest request) {
+        notificationService.update(toModel(request));
+    }
+
+    /**
+     * Удалить уведомление по id
+     */
+    @DeleteMapping("/{id}")
+    public void deleteNotification(@PathVariable("id") Long id) {
+        notificationService.deleteById(id);
+    }
+
+    private static Notification toModel(NotificationEditRequest request) {
+        return Notification.builder()
+                .id(request.getId())
+                .stockId(request.getStockId())
+                .targetValue(request.getTargetValue())
+                .comment(request.getComment())
+                .build();
     }
 }
