@@ -10,7 +10,10 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationCreateRequest {
+public class NotificationEditRequest {
+
+    @Schema(description = "Идентификатор уведомления")
+    private Long id;
 
     @Schema(description = "Идентификатор инструмента")
     private Long stockId;

@@ -20,11 +20,6 @@ class StockDaoTest extends IntegrationTest {
     @Autowired
     StockDao stockDao;
 
-    @BeforeEach
-    void setup() {
-        clearTables("stocks");
-    }
-
     @Test
     void create_stock__when_does_not_exists() {
         // GIVEN
