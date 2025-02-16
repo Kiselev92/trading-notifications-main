@@ -14,8 +14,7 @@ import java.time.Instant;
 
 @Repository
 @RequiredArgsConstructor
-public class JdbcNotificationDao {
-
+public class NotificationDao {
     private final NamedParameterJdbcOperations jdbc;
 
 
@@ -40,22 +39,48 @@ public class JdbcNotificationDao {
 
     public Notification findById(Long id) {
         String sql = """
-                SELECT *
-                FROM notifications WHERE id = :id
-                """;
+                SELECT * FROM notifications WHERE id = :id""";
 
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbc.query(sql, params, rs -> {
             rs.next();
             return new Notification(
-                        rs.getLong("id"),
-                        rs.getLong("stock_id"),
-                        rs.getBigDecimal("target_value"),
-                        rs.getString("comment"),
-                        rs.getTimestamp("created").toInstant(),
-                        rs.getTimestamp("updated").toInstant()
-                );
+                    rs.getLong("id"),
+                    rs.getLong("stock_id"),
+                    rs.getBigDecimal("target_value"),
+                    rs.getString("comment"),
+                    rs.getTimestamp("created").toInstant(),
+                    rs.getTimestamp("updated").toInstant()
+            );
         });
+    }
+
+    public void deleteById(Long id) {
+        String sql = """
+                DELETE FROM notifications WHERE id = :id""";
+
+        SqlParameterSource params = new MapSqlParameterSource("id", id);
+        jdbc.update(sql, params);
+    }
+
+    public Long update(Long id, Notification updatedNotification) {
+        String sql = """
+                UPDATE notifications 
+                SET stock_id = :stockId, 
+                target_value = :targetValue, 
+                comment = :comment, 
+                updated = :updated
+                WHERE id = :id
+                """;
+
+        SqlParameterSource params = new MapSqlParameterSource("id", id)
+                .addValue("targetValue", updatedNotification.getTargetValue())
+                .addValue("stockId", updatedNotification.getStockId())
+                .addValue("comment", updatedNotification.getComment())
+                .addValue("updated", Timestamp.from(Instant.now()));
+
+        jdbc.update(sql, params);
+        return (Long) params.getValue("id");
     }
 }

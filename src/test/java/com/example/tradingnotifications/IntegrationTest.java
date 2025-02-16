@@ -16,16 +16,4 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected NamedParameterJdbcOperations testJdbc;
-
-    @BeforeEach
-    void setup() {
-        clearTables("notifications");
-    }
-
-    protected void clearTables(String... tableNames) {
-        for (String tableName : tableNames) {
-            testJdbc.update("DELETE FROM " + tableName, emptyMap());
-            testJdbc.update("DELETE FROM " + tableName, emptyMap());
-        }
-    }
 }
