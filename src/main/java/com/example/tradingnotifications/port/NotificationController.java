@@ -1,6 +1,5 @@
 package com.example.tradingnotifications.port;
 
-import com.example.tradingnotifications.adapter.dao.JdbcNotificationDao;
 import com.example.tradingnotifications.domain.Notification;
 import com.example.tradingnotifications.service.NotificationService;
 import lombok.RequiredArgsConstructor;
