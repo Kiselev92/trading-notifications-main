@@ -3,6 +3,7 @@ package com.example.tradingnotifications.adapter.dao;
 import com.example.tradingnotifications.IntegrationTest;
 import com.example.tradingnotifications.domain.Notification;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -38,10 +39,6 @@ public class NotificationDaoTest extends IntegrationTest {
         assertThat(findAll())
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("created", "updated")
                 .containsOnly(notification.withId(actualId));
-    }
-
-    private List<Notification> findAll() {
-        return testJdbc.query("SELECT * FROM notifications", Map.of(), rowMapper);
     }
 
     @Test
@@ -91,6 +88,46 @@ public class NotificationDaoTest extends IntegrationTest {
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("created", "updated")
                 .doesNotContain(ownNotification.withId(ownNotificationId))
                 .contains(otherNotification.withId(otherNotificationId));
+    }
+
+    @Test
+    void update_notification__when_notification_exist() {
+        //GIVEN
+        Notification ownNotification = Notification.builder()
+                .stockId(100L)
+                .targetValue(BigDecimal.valueOf(1000))
+                .comment("My-comment")
+                .build();
+
+        Notification otherNotification = Notification.builder()
+                .stockId(200L)
+                .targetValue(BigDecimal.valueOf(2000))
+                .comment("My-comment")
+                .build();
+
+        Long ownNotificationId = notificationDao.create(ownNotification);
+        Long otherNotificationId = notificationDao.create(otherNotification);
+
+        Notification updatedNotification = ownNotification.builder()
+                .id(ownNotification.getId())
+                .stockId(150L)
+                .targetValue(BigDecimal.valueOf(1500))
+                .comment("Updated-comment")
+                .build();
+
+        //WHEN
+        notificationDao.update(ownNotificationId, updatedNotification);
+
+        //THEN
+        assertThat(findAll())
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("created", "updated")
+                .contains(updatedNotification.withId(ownNotificationId))
+                .contains(otherNotification.withId(otherNotificationId))
+                .doesNotContain(ownNotification.withId(ownNotificationId));
+    }
+
+    private List<Notification> findAll() {
+        return testJdbc.query("SELECT * FROM notifications", Map.of(), rowMapper);
     }
 
     private static final RowMapper<Notification> rowMapper = new NotificationRowMapper();
